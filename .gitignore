@@ -1,50 +1,25 @@
-# History files
-.Rhistory
-.Rapp.history
-
-# Session Data files
-.RData
-.RDataTmp
-
-# User-specific files
-.Ruserdata
-
-# Example code in package build process
-*-Ex.R
-
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
-
-# RStudio files
+# --- R ---
 .Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+# --- Veliki podaci ---
+# Sirovi CSV ne ide na GitHub (preko 100 MB), link je u README
+podaci/sirovi/*
+!podaci/sirovi/.gitkeep
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
+# --- Privremeni fajlovi ---
+*.log
+*.tmp
+~$*
 
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
-.env
-
-# pkgdown site
-docs/
-
-# translation temp files
-po/*~
-
-# RStudio Connect folder
-rsconnect/
+# --- Knit izlazi koji se generisu iz .Rmd ---
+izvestaj/*_files/
+izvestaj/*_cache/
