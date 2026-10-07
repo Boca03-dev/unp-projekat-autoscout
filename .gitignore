@@ -23,3 +23,4 @@ desktop.ini
 # --- Knit izlazi koji se generisu iz .Rmd ---
 izvestaj/*_files/
 izvestaj/*_cache/
+izvestaj/seminarski.html

@@ -1,0 +1,93 @@
+﻿rb,kolona,tip,pct_NA,n_razlicitih,opseg,primeri,znacenje,odluka,vlasnik,napomena
+1,id,tekst,0,118382,,001c08bb-96f9-4198-a2c9-39bcab088a08 | 00918c06-f736-404a-b55a-0ccd1d876129 | 0083e29f-8030-4478-b662-6dff92e22a06,Jedinstveni identifikator,IZBACITI,A,
+2,description,tekst,3.7,107516,,"Deze Suzuki Swift is maatje S, maar hij valt ... | Kraftvoll, komfortabel, kompromisslos: BMW X3... | <strong>Highlights:</strong><br /><ul><li><st...",Opis automobila,IZBACITI,B,Slobodan tekst na vise jezika; pre izbacivanja izvesti duzinu opisa
+3,ratings_average,tekst,35.4,42,,"4,8 | 4,2 | 4,3",Srednja ocena,PARSIRATI,A,"Decimalni zarez: ""4,8"" -> 4.8. Ocena PRODAVCA, ne vozila"
+4,ratings_count,numericki,35.4,737,0 – 8.993,124 | 253 | 34,Ukupan broj ocena,ZADRZATI,A,"Opisuje prodavca, ne vozilo. 35,4% NA, 6.731 nula"
+5,ratings_recommend_percentage,numericki,35.4,63,0 – 100,0 | 83 | 82,Preporuka u procentima,ZADRZATI,A,"Opisuje prodavca, ne vozilo. 13.564 nule"
+6,price_currency,tekst,0,1,,EUR,Valuta,IZBACITI,A,"Sve je u evrima, nema varijacije"
+7,price,numericki,0,16476,1 – 13.500.000,22950 | 46000 | 179900,Cena,ZADRZATI,A,"Ciljna promenljiva. Asimetrija 1,82 -> modelira se log(price)"
+8,price_tax_deductible,logicki,0,2,,TRUE | FALSE,Odbijanje poreza,ZADRZATI,A,
+9,price_negotiable,logicki,0,2,,FALSE | TRUE,Da li je cena fiksna,ZADRZATI,A,
+10,price_net,numericki,71.3,14414,1 – 7.250.000,19279 | 46179 | 38651,Neto cena,IZBACITI,A,"CURENJE INFORMACIJE: r = 0,999 sa price; price_net = price / (1 + PDV)"
+11,price_vat_rate,numericki,74.3,10,0 – 22,20 | 19 | 22,Poreska stopa,IZBACITI,A,CURENJE INFORMACIJE: drugi deo iste jednacine
+12,vin,tekst,66,37578,,WP0ZZZ99ZJS168484 | SHHFK3750FU703989 | WP0ZZZY13SSA60220,Broj sasije,IZBACITI,A,
+13,make,tekst,0,25,,Suzuki | BMW | Porsche,Proizvodjac,ZADRZATI,A,
+14,model,tekst,1.2,627,,Swift | X3 M | 991,Model,AGREGIRATI,B,"628 nivoa; agregacija na top 30 kombinacija make+model, ostalo u ""Ostalo"""
+15,model_version,tekst,0.7,84171,,1.2 Style Smart Hybrid | Navigatie | Cruise c... | M40i xDrive | nahezu Vollausstattung | Top-Zu... | .2 GT3 TOURING / MANUAL / CHRONO / LIFT / BOS...,Specifican model,IZBACITI,B,84.172 nivoa; pre izbacivanja izvesti duzinu i kljucne reci
+16,german_hsn_tsn,tekst,74,3073,,0583/AND | 2222/BPA | 2222/AHY,Nemacki identifikator modela,IZBACITI,A,Nemacki identifikator modela (HSN/TSN)
+17,mileage_km_raw,numericki,0.5,39809,0 – 2.570.000,10500 | 55609 | 18200,Predjenih kilometara,ZADRZATI,A,Nula km kod polovnog vozila je prikriveni NA (246 redova)
+18,mileage_km,tekst,0.5,39809,,"10,500 km | 55,609 km | 18,200 km",Predjenih kilometara,IZBACITI,A,Isto kao gore samo ima string sa km
+19,registration_date,datum,0.2,419,,2024-12-01 | 2020-03-01 | 2018-04-01,Datum registracije,ZADRZATI,A,"Za vecinu datum PRVE registracije; kod ~119 redova poновna registracija, otkriveno preko km_po_godini"
+20,production_year,numericki,81.2,34,1.963 – 2.026,2025 | 2019 | 2020,Godina pocetka proizvodnje modela,IZBACITI,A,Nije godina proizvodnje primerka nego modela/generacije; potvrdjeno na Mercedes GLA (2016) i Porsche 992 (2019)
+21,vehicle_type,tekst,0,2,,Car | Transporter,Putnicko ili komercijalno vozilo,IZBACITI,A,Zadrzavaju se samo putnicka vozila
+22,body_type,tekst,0,18,,Compact | Off-Road/Pick-up | Coupe,Karoserija,ZADRZATI,A,
+23,nr_seats,numericki,4.1,17,1 – 255,5 | 2 | 4,Broj sedista,ZADRZATI,A,
+24,nr_doors,numericki,1.2,7,1 – 9,5 | 2 | 4,Broj vrata,ZADRZATI,A,
+25,body_color,tekst,10.1,14,,Black | Blue | White,Boja automobila,ZADRZATI,A,
+26,paint_type,tekst,22,2,,Metallic | Others,Tip boje,ZADRZATI,A,
+27,body_color_original,tekst,37.4,11203,,Super black pearl metallic (zw | Saphire Blue metallic | Bianco,Fabricki naziv boje,IZBACITI,A,"Slobodan tekst prodavca, 11.204 nivoa; pokriveno sa body_color"
+28,upholstery,tekst,22.6,6,,Cloth | Full leather | Part leather,Tapacir,ZADRZATI,A,
+29,upholstery_color,tekst,27.4,11,,Black | Grey | Brown,Boja tapacira,ZADRZATI,A,
+30,power_kw,numericki,1.4,532,1 – 8.115,61 | 265 | 368,Snaga u kilovatima,IZBACITI,A,"Ista velicina kao power_hp, korelacija r = 1; zadrzana verzija u KS"
+31,power_hp,numericki,1.4,532,1 – 11.033,83 | 360 | 500,Konjska snaga,ZADRZATI,A,
+32,transmission,tekst,0.7,3,,Manual | Automatic | Semi-automatic,Tip menjaca,ZADRZATI,A,
+33,gears,numericki,36.5,19,0 – 99,5 | 8 | 6,Broj brzina,ZADRZATI,A,
+34,drive_train,tekst,23.4,3,,Front Wheel Drive | 4WD | Rear Wheel Drive,Pogon,ZADRZATI,A,
+35,cylinders,numericki,21,17,0 – 65,3 | 6 | 4,Broj cilindara,ZADRZATI,A,"Nula je ISPRAVNA za elektricna vozila, prikrivени NA za SUS"
+36,cylinders_volume_cc,numericki,10.4,473,0 – 99.999,1197 | 2998 | 3996,Kubikaza/zapremina motora,ZADRZATI,A,"Nula je ISPRAVNA za elektricna vozila, prikriveni NA za SUS"
+37,weight_kg,tekst,20.3,1637,,"894 kg | 1,945 kg | 1,760 kg",Tezina automobila,PARSIRATI,A,"Broj sa jedinicom: ""1,945 kg"" -> 1945. Nema numerickog parnjaka"
+38,has_particle_filter,logicki,0,2,,FALSE | TRUE,DPF,ZADRZATI,A,
+39,fuel_category,tekst,0.1,9,,Gasoline | Electric/Diesel | Electric/Gasoline,Tip goriva,ZADRZATI,A,
+40,primary_fuel,tekst,49.3,14,,Super E10 95 | Super 95 | Regular/Benzine 91,Preporuceno gorivo,ZADRZATI,A,
+41,electric_range_km,numericki,89.2,581,1 – 1.350,39 | 532 | 91,Domet baterije,IZBACITI,A,"Neprimenljivo za SUS vozila (89,2% NA); informacija o pogonu je u fuel_category"
+42,electric_range_city_km,numericki,99.5,300,14 – 925,611 | 445 | 103,Domet baterije u gradu,IZBACITI,A,"99,5% NA; r = 0,978 sa electric_range_km"
+43,fuel_cons_comb_l100_km,numericki,64.7,240,0 – 95,7.8 | 12.9 | 6.4,Potrosnja kombinovano 100km,SPOJITI,A,"NEDC standard; potrosnja = coalesce(WLTP, NEDC) + indikator standard"
+44,fuel_cons_city_l100_km,logicki,100,0,,,Potrosnja grad 100km,IZBACITI,A,
+45,fuel_cons_highway_l100_km,logicki,100,0,,,Potrosnja autoput 100km,IZBACITI,A,
+46,co2_emission_grper_km,numericki,79,381,0 – 165.147,220 | 310 | 128,Emisija stetnih gasova,SPOJITI,A,"NEDC standard; co2 = coalesce(WLTP, NEDC)"
+47,fuel_cons_comb_l100_wltp_km,numericki,74.4,235,0 – 7.500,10.5 | 10.8 | 10.7,Potrosnja kombinovano 100km,SPOJITI,A,WLTP standard; preklapanje sa NEDC svega 60 redova
+48,fuel_cons_electric_comb_l100_wltp_km,numericki,95.8,311,0 – 418,18.7 | 26.4 | 21.1,Potrosnja struje kombinovano,IZBACITI,A,Potrosnja struje
+49,co2_emission_grper_wltp_km,numericki,60.8,506,0 – 9.999,99 | 80 | 239,Emisija stetnih gasova,SPOJITI,A,WLTP standard; preklapanje sa NEDC svega 15 redova
+50,equipment_comfort,tekst,0,74157,,"['Air conditioning', 'Automatic climate contr... | ['360° camera', 'Armrest', 'Automatic climate... | ['Air conditioning', 'Armrest', 'Automatic cl...",Oprema za udobnost,PARSIRATI,B,"Lista u tekstu; separator je "", ', a NE zarez -> br_opcija_komfor"
+51,equipment_entertainment,tekst,0,6687,,"['Android Auto', 'Apple CarPlay', 'Bluetooth'... | ['Android Auto', 'Apple CarPlay', 'Bluetooth'... | ['Apple CarPlay', 'Bluetooth', 'CD player', '...",Oprema za zabavu,PARSIRATI,B,Lista u tekstu -> br_opcija_zabava
+52,equipment_extra,tekst,0,48495,,"['Alloy wheels (16"")', 'Spoiler'] | ['Alloy wheels (20"")', 'Ambient lighting', 'A... | ['Alloy wheels (20"")', 'Ambient lighting', 'A...",Dodatna oprema,PARSIRATI,B,Lista u tekstu -> br_opcija_extra
+53,equipment_safety,tekst,0,53289,,"['ABS', 'Adaptive Cruise Control', 'Alarm sys... | ['ABS', 'Adaptive Cruise Control', 'Adaptive ... | ['ABS', 'Alarm system', 'Central door lock', ...",Oprema za bezbednost,PARSIRATI,B,Lista u tekstu -> br_opcija_bezbednost
+54,is_used,logicki,0,2,,TRUE | FALSE,Polovno vozilo,IZBACITI,A,Filter populacije: filter(is_used == TRUE); u radnom skupu nema varijacije
+55,is_new,logicki,0,2,,FALSE | TRUE,Novo vozilo,IZBACITI,A,Posle filtriranja na polovna vozila nema varijacije
+56,is_preregistered,logicki,0,2,,FALSE | TRUE,Da li je preregistrovano,IZBACITI,A,Posle filtriranja na polovna vozila nema varijacije
+57,had_accident,logicki,0,2,,FALSE | TRUE,Da li je bilo u saobracajnoj nesreci,ZADRZATI,A,
+58,has_full_service_history,logicki,0,2,,FALSE | TRUE,Da li ima servisnu knjizicu,ZADRZATI,A,
+59,non_smoking,logicki,0,2,,FALSE | TRUE,Da li je pusac vozio,ZADRZATI,A,
+60,nr_prev_owners,numericki,45.3,16,0 – 99,2 | 1 | 0,Broj vlasnika,ZADRZATI,A,
+61,is_rental,logicki,0,2,,FALSE | TRUE,Da li je rentovano,ZADRZATI,A,
+62,envir_standard,tekst,34.9,11,,Euro 6d-TEMP | Euro 6 | Euro 6e,Evropski emisioni standard ,ZADRZATI,A,
+63,original_market,tekst,61.5,33,,Germany | Italy | European Union,Poreklo,IZVEDENA,A,"61,5% NA, popunjenost zavisi od zemlje (ES 88%, NL 9%) -> MAR. Izvodi se u poreklo sa 3 nivoa"
+64,offer_type,tekst,0,3,,U | N | A,Tip ponude,IZBACITI,A,"Duplira is_used i is_new; nivo ""A"" ima svega 3 reda"
+65,country_code,tekst,0,8,,NL | DE | BE,Kod drzave,ZADRZATI,A,
+66,zip,tekst,0,13872,,8801 PN | 81476 | 9830,Zip kod,IZBACITI,A,
+67,city,tekst,0.1,15690,,FRANEKER | München | Sint-Martens-Latem,Grad,IZBACITI,A,
+68,street,tekst,17.2,17476,,"Edisonstraat 1 | Kortrijksesteenweg 168 | Via Della Vittoria, 132/A",Ulica,IZBACITI,A,
+69,latitude,numericki,0.3,27334,17.08226 – 62.07017,53.18188 | 48.09126 | 51.0073,Geof. Sirina,IZBACITI,A,Sirovа koordinata nema linearan odnos sa cenom; geografija pokrivena sa country_code
+70,longitude,numericki,0.3,27497,-99.1146 – 25.47846,5.52596 | 11.4914 | 3.62822,geof. Duzina,IZBACITI,A,Sirovа koordinata nema linearan odnos sa cenom; geografija pokrivena sa country_code
+71,seller_is_dealer,logicki,0,2,,TRUE | FALSE,da li je prodavac prodavacka kuca,IZBACITI,A,"Duplira seller_type, koji ima vise nivoa"
+72,seller_type,tekst,0,2,,Dealer | PrivateSeller,tip pordavca,ZADRZATI,A,
+73,seller_company_name,tekst,16.7,17141,,Haaima Franeker | Garage Vandenberghe | Ongarato Motors Srl,ime kompanieje prodavca,IZBACITI,A,
+74,has_warranty,logicki,100,0,,,da li ima garanciju,IZBACITI,A,
+75,warranty,logicki,100,0,,,grarancija,IZBACITI,A,
+76,potrosnja,numericki,,,,,Kombinovana potrosnja (WLTP ili NEDC),SPOJITI,A,"coalesce(WLTP, NEDC); NA pada sa 64,7% na ~39%"
+77,co2,numericki,,,,,Emisija CO2 (WLTP ili NEDC),SPOJITI,A,"coalesce(WLTP, NEDC)"
+78,standard,tekst,,,,,Standard merenja potrosnje,IZVEDENA,A,WLTP / NEDC / nepoznat; WLTP daje sistematski vise vrednosti
+79,poreklo,tekst,,,,,Poreklo vozila,IZVEDENA,A,"domace / strano / nepoznato; razlika u ceni je selekciona, ne uzrocna"
+80,je_elektricno,logicki,,,,,Da li je vozilo elektricno ili hibridno,IZVEDENA,A,Iz fuel_category; koristi se za tretman nula u cylinders i co2
+81,starost_god,numericki,,,,,Starost vozila u godinama,IZVEDENA,A,(DATUM_SNIMKA - registration_date)/365.25; NE Sys.Date()
+82,km_po_godini,numericki,,,,,Prosecna kilometraza po godini,IZVEDENA,A,"mileage_km_raw / pmax(starost_god, 0.5); otkriva neispravne datume"
+83,log_price,numericki,,,,,Logaritam cene,IZVEDENA,A,Ciljna promenljiva modela; ispravlja desnu zakosenost
+84,br_opcija_komfor,numericki,,,,,Broj opcija za udobnost,IZVEDENA,B,Iz equipment_comfort
+85,br_opcija_zabava,numericki,,,,,Broj opcija za zabavu,IZVEDENA,B,Iz equipment_entertainment
+86,br_opcija_extra,numericki,,,,,Broj dodatnih opcija,IZVEDENA,B,Iz equipment_extra
+87,br_opcija_bezbednost,numericki,,,,,Broj bezbednosnih opcija,IZVEDENA,B,Iz equipment_safety
+88,ima_premium_opciju,logicki,,,,,Indikator skupih opcija,IZVEDENA,B,"Panorama roof, Heads-up display, Leather seats i slicno"
+89,make_grp,tekst,,,,,Agregirana marka,IZVEDENA,B,Top 8 marki + Ostalo
+90,make_model_grp,tekst,,,,,Agregirana kombinacija marke i modela,IZVEDENA,B,Top 30 + Ostalo; model sam nije jedinstven
+91,segment_snage,tekst,,,,,Kategorizovana snaga motora,IZVEDENA,B,Nelinearna veza power_hp i cene
+92,duzina_opisa,numericki,,,,,Broj karaktera u opisu,IZVEDENA,B,Iz description i model_version
