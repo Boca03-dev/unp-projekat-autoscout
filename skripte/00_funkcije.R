@@ -325,7 +325,7 @@ snimi <- function(objekat, ime) {
   if (!dir.exists(P_OBRADJENI)) dir.create(P_OBRADJENI, recursive = TRUE)
   p <- file.path(P_OBRADJENI, paste0(ime, ".rds"))
   saveRDS(objekat, p)
-  message("Снимљено: ", p, " (", format(nrow(objekat), big.mark = "."), " редова)")
+  message("Снимљено: ", p, " (", format(nrow(objekat), big.mark = " "), " редова)")
   invisible(p)
 }
 
