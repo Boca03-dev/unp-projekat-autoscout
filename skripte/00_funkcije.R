@@ -95,19 +95,30 @@ decimalni_zarez <- function(x) {
 # PAZNJA: separator je "', '", a NE zarez, jer pojedini nazivi
 # opcija sami sadrze zarez ('Automatic climate control, 3 zones').
 izvuci_opcije <- function(x) {
-  x %>%
-    str_remove("^\\[") %>%
-    str_remove("\\]$") %>%
-    str_split("',\\s*'") %>%
-    map(~ str_remove_all(.x, "^'|'$"))
+  map(x, function(v) {
+    if (is.na(v)) return(NA_character_)
+    
+    # Izdvajanje opcija izmedju jednostrukih ili dvostrukih navodnika
+    opcije <- str_extract_all(
+      v,
+      "'[^']*'|\"[^\"]*\""
+    )[[1]]
+    
+    # Uklanjanje spoljasnjih navodnika
+    opcije <- str_sub(opcije, 2, -2)
+    
+    # Uklanjanje praznih opcija
+    opcije[nzchar(str_trim(opcije))]
+  })
 }
 
 broj_opcija <- function(x) {
-  case_when(
-    is.na(x)                  ~ NA_real_,
-    x %in% c("[]", "['']")    ~ 0,
-    TRUE                      ~ str_count(x, "',\\s*'") + 1
-  )
+  map_dbl(izvuci_opcije(x), function(v) {
+    if (length(v) == 1 && is.na(v)) {
+      return(NA_real_)
+    }
+    as.numeric(length(v))
+  })
 }
 
 # Da li lista opreme sadrzi odredjenu opciju
