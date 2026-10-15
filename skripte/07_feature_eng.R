@@ -749,7 +749,317 @@ tibble(
 # ali kako je ovo prost model, još uvek ne možemo da zaključimo da
 # je jedan bolji od drugog
 
+
 # ===================================================================================
 # TRANSFORMACIJE KATEGORIJSKIH ATRIBUTA
 # ===================================================================================
 
+#-----------------------------------
+# Make + Model
+#-----------------------------------
+
+auta %>%
+  summarise(
+    broj_marki = n_distinct(make, na.rm = TRUE),
+    broj_modela = n_distinct(model, na.rm = TRUE),
+    broj_verzija = n_distinct(model_version, na.rm = TRUE)
+  )
+
+# make ima kardinalost = 25, što nije problem, čak i da koristimo one-hot encoding dobijamo max 25 binarnih kolona
+
+# model ima kardinalost = 561, previše, ali možemo da grupišemo modele, tj. one koji su česti da sačuvamo, a ostale
+# da stavimo u grupu Other ili sl.
+
+# model_version ima kardinalnost = 70014, ovde već imamo previše različitih verzija, ali opet možda možemo izvući
+# nešto korisno, npr. tip opreme
+
+# Učestalost pojedinačnih modela
+
+ucestalost_modela <- auta %>%
+  count(make, model, sort=TRUE) # Koristimo i make i model, jer različiti proizvođači mogu imaju iste nazive modela
+
+print(ucestalost_modela, n = 30)
+
+
+ucestalost_modela %>%
+  summarise(
+    ukupno_kombinacija = n(),
+    ispod_10 = sum(n < 10),
+    ispod_50 = sum(n < 50),
+    ispod_100 = sum(n < 100),
+    vozila_ispod_50 = sum(n[n < 50])
+  )
+
+ucestalost_modela %>%
+  summarise(
+    ukupno_vozila = sum(n),
+    
+    ispod_10 = sum(n[n < 10]),
+    ispod_50 = sum(n[n < 50]),
+    ispod_100 = sum(n[n < 100]),
+    
+    procenat_10 = round(sum(n[n < 10]) / sum(n) * 100, 2),
+    procenat_50 = round(sum(n[n < 50]) / sum(n) * 100, 2),
+    procenat_100 = round(sum(n[n < 100]) / sum(n) * 100, 2)
+  )
+
+# Grupisanje retkih modela
+
+# Za grupisanje retkih modela izabran je prag od 50 primeraka
+# Analizirana su tri praga: 10, 50 i 100
+
+# Prag od 10 bi ostaivio relativno veliki broj kategorija
+# Dok bri prag od 100 grupisao 9% ukupnih vozila
+# Prag od 50 predstavlja kompromis između smanjenja kardinalnosti i očuvanja informacija
+
+# Modeli sa manje od 50 primeraka grupišu se u kategoriju Other unutar svoje marke(npr Prosche_Other, Audi_Other itd...)
+
+ucestalost_modela <- auta %>%
+  count(make, model, name = "broj_primeraka")
+
+auta <- auta %>%
+  left_join(
+    ucestalost_modela,
+    by = c("make", "model")
+  ) %>%
+  mutate(
+    model_grupa = if_else(
+      broj_primeraka >= 50,
+      paste(make, model, sep = "_"),
+      paste(make, "Other", sep = "_")
+    )
+  ) %>%
+  select(-broj_primeraka)
+
+# Provera transformacije
+
+auta %>%
+  summarise(
+    pre_grupisanja = n_distinct(
+      paste(make, model, sep = "_")
+    ),
+    posle_grupisanja = n_distinct(model_grupa),
+    broj_grupisanih = sum(
+      str_ends(model_grupa, "_Other"),
+      na.rm = TRUE
+    ),
+    procenat_grupisanih = round(
+      mean(str_ends(model_grupa, "_Other"), na.rm = TRUE) * 100,
+      2
+    )
+  )
+# Vidimo da smo prvobitno imali 577 različitih modela
+# Sada nakon grupisanja smo dobili 235 grupa, što je znatno bolje
+# Ovime smanjujemo broj retkih kategorija koje bi potencijalno otežale modelovanje, a takođe čuvamo informacije o
+# proizvođaču i najčešćim modelima.
+# Kategorija Other ima 4232 automobila (4.52%)
+
+# Modeli sa najmanje 50 primeraka zadržavaju ceo naziv
+# A redji modeli se grupišu na osnovu marke automobila (BMW_Other,...)
+
+#-----------------------------------
+# model_version
+#-----------------------------------
+
+# Pregled najčešćih verzija
+
+auta %>%
+  count(model_version, sort = TRUE) %>%
+  print(n = 30, width = Inf)
+
+set.seed(123)
+
+auta %>%
+  filter(!is.na(model_version)) %>%
+  distinct(model_version) %>%
+  slice_sample(n = 30) %>%
+  print(n = 30, width = Inf)
+
+# Provera nedostajućih vrednosti
+auta %>%
+  summarise(
+    ukupno = n(),
+    nedostaje = sum(is.na(model_version)),
+    jedinstvene_verzije = n_distinct(model_version, na.rm = TRUE),
+    verzije_jedan_primerak = sum(
+      count(auta, model_version)$n == 1
+    )
+  )
+# Nedostaje svega 674 vrednosti, tako da to nije problem.
+
+# Iz ovog primerka možemo da zaključimo da model_version nije baš standardizovan
+# Već da je verovatno sam prodavac popunjavao
+# Vidimo da ima različitih karakteristike, jezika itd...
+# Iz domenskog znanja znamo da postoje određeni paketi opreme
+# Pa bismo možda tu informaciju mogli da izvučemo iz model_version
+
+auta %>%
+  mutate(
+    verzija = str_to_lower(
+      coalesce(model_version, "")
+    )
+  ) %>%
+  summarise(
+    m_sport = sum(
+      str_detect(verzija, "\\bm[ -]?sport\\b")
+    ),
+    s_line = sum(
+      str_detect(verzija, "\\bs[ -]?line\\b")
+    ),
+    amg_line = sum(
+      str_detect(verzija, "\\bamg[ -]?line\\b")
+    ),
+    luxury_line = sum(
+      str_detect(verzija, "\\bluxury[ -]?line\\b")
+    ),
+    competition = sum(
+      str_detect(verzija, "\\bcompetition\\b")
+    ),
+    gts = sum(
+      str_detect(verzija, "\\bgts\\b")
+    )
+  )
+
+# Na osnovu outputa možemo da zaključimo da model_version sadrži korisne informacije
+
+# Provera oznaka sportskih paketa po proizvođačima
+
+auta %>%
+  mutate(
+    m_sport = str_detect(
+      coalesce(model_version, ""),
+      regex("\\bm[ -]?sport\\b", ignore_case = TRUE)
+    ),
+    s_line = str_detect(
+      coalesce(model_version, ""),
+      regex("\\bs[ -]?line\\b", ignore_case = TRUE)
+    ),
+    amg_line = str_detect(
+      coalesce(model_version, ""),
+      regex("\\bamg[ -]?line\\b", ignore_case = TRUE)
+    )
+  ) %>%
+  pivot_longer(
+    cols = c(m_sport, s_line, amg_line),
+    names_to = "oznaka",
+    values_to = "prisutna"
+  ) %>%
+  filter(prisutna) %>%
+  count(oznaka, make, sort = TRUE) %>%
+  arrange(oznaka, desc(n)) %>%
+  print(n = Inf)
+
+
+auta <- auta %>%
+  mutate(
+    ima_sport_paket = case_when(
+      is.na(model_version) ~ NA,
+      
+      make == "BMW" &
+        str_detect(
+          model_version,
+          regex("\\bm[ -]?sport\\b", ignore_case = TRUE)
+        ) ~ TRUE,
+      
+      make == "Audi" &
+        str_detect(
+          model_version,
+          regex("\\bs[ -]?line\\b", ignore_case = TRUE)
+        ) ~ TRUE,
+      
+      make == "Mercedes-Benz" &
+        str_detect(
+          model_version,
+          regex("\\bamg[ -]?line\\b", ignore_case = TRUE)
+        ) ~ TRUE,
+      
+      TRUE ~ FALSE
+    )
+  )
+
+# Provera novog atributa
+
+auta %>%
+  count(ima_sport_paket) %>%
+  mutate(
+    procenat = round(n / sum(n) * 100, 2)
+  )
+
+# Povezanost sportskog paketa sa cenom po proizvođačima
+
+auta %>%
+  filter(
+    make %in% c("BMW", "Audi", "Mercedes-Benz"),
+    !is.na(ima_sport_paket)
+  ) %>%
+  group_by(make, ima_sport_paket) %>%
+  summarise(
+    n = n(),
+    medijana_cene = median(price, na.rm = TRUE),
+    medijana_starosti = median(starost_god, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Kod Audi-a i BMW-a vidimo da je medijana cene nešto veća u sportskom paketa, a kod Mercedes-Benz-a manja
+# Ali ovo je na nivou cele marke
+# Razlog može biti da imamo više modela npr Mercedes A klase koji su AMG, dok su S klasa bez AMG, ali S klasa je 
+# po defaultu skuplja od A klase
+
+# Povezanost sportskog paketa sa cenom unutar iste marke i modela
+
+poredjenje_sport_paketa <- auta %>%
+  filter(
+    make %in% c("BMW", "Audi", "Mercedes-Benz"),
+    !is.na(ima_sport_paket)
+  ) %>%
+  group_by(make, model, ima_sport_paket) %>%
+  summarise(
+    n = n(),
+    medijana_cene = median(price, na.rm = TRUE),
+    medijana_starosti = median(starost_god, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = ima_sport_paket,
+    values_from = c(n, medijana_cene, medijana_starosti)
+  ) %>%
+  filter(
+    !is.na(n_TRUE),
+    !is.na(n_FALSE),
+    n_TRUE >= 30,
+    n_FALSE >= 30
+  ) %>%
+  mutate(
+    razlika_eur = medijana_cene_TRUE - medijana_cene_FALSE,
+    razlika_pct = round(
+      razlika_eur / medijana_cene_FALSE * 100,
+      2
+    )
+  ) %>%
+  arrange(desc(razlika_pct))
+
+print(poredjenje_sport_paketa, n = 30, width = Inf)
+
+# Primer:
+# Vidimo da je Audi Q5 76% skuplji sa sportskom opremom, ali ne možemo da donesemo zaključak da je to razlog
+# Jer vidimo da je onaj sa opremom znatno mlađi
+
+poredjenje_sport_paketa %>%
+  group_by(make) %>%
+  summarise(
+    broj_modela = n(),
+    
+    pozitivna_razlika = sum(razlika_eur > 0),
+    negativna_razlika = sum(razlika_eur < 0),
+    
+    medijana_razlike_pct = median(razlika_pct),
+    
+    .groups = "drop"
+  )
+
+# Kod 49/59 modela vidimo da je cena veća u slučaju sportskog paketa
+
+# Rezultati ukazuju na pozitivnu povezanost prisustva sportskog paketa sa cenom kod većine modela
+
+# Još uvek ne možemo zaključiti da sam sportski paket uzrokuje razliku.
+# Atribut ćemo zadržati kao kandidata za prediktivno modelovanje, a kasnije ćemo proveriti njegovu korisnost
