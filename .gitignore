@@ -24,3 +24,9 @@ desktop.ini
 izvestaj/*_files/
 izvestaj/*_cache/
 izvestaj/seminarski.html
+# --- RStudio privremeni snimci ---
+.RDataTmp*
+
+# Medjukoraci se regenerišu pokretanjem 01 i 04
+podaci/obradjeni/auta_cisto.rds
+podaci/obradjeni/auta_bez_anomalija.rds
