@@ -4,14 +4,14 @@ library(here)
 source(here("skripte","00_funkcije.R"))
 
 # Učitavanje već pripremljenih podataka
-auta <- ucitaj("auta_cisto")
+auta <- ucitaj("auta_imputirano")
 
 # Kreiranje novih feature-a
 
 #--------------------
 # Oprema
 #--------------------
-
+summary(auta)
 auta <- auta %>%
   mutate(
     broj_komfor = broj_opcija(equipment_comfort),
@@ -19,6 +19,7 @@ auta <- auta %>%
     broj_multimedija = broj_opcija(equipment_entertainment),
     broj_dodatna = broj_opcija(equipment_extra)
   )
+
 
 auta <- auta %>%
   mutate(
@@ -238,12 +239,18 @@ auta <- auta %>%
       equipment_comfort, "Heads-up display")
   )
 
+oprema_indikatori <- c(
+  "ima_kameru", "ima_el_sedista", "ima_panoramu",
+  "ima_adaptivni_tempomat", "ima_mrtvi_ugao", "ima_full_led",
+  "ima_carplay", "ima_digitalni_kokpit", "ima_ambijentalno", "ima_hud"
+)
+
 # Provera ispravnosti
 
 auta %>%
   summarise(
     across(
-      starts_with("ima_"),
+      all_of(oprema_indikatori),
       ~ sum(.x, na.rm = TRUE)
     )
   ) %>%
@@ -281,9 +288,9 @@ izvuci_opcije(primer)[[1]]
 broj_opcija(primer)
 
 auta %>%
-  select(price, starts_with("ima_")) %>%
+  select(price, all_of(oprema_indikatori)) %>%
   pivot_longer(
-    cols = starts_with("ima_"),
+    cols = all_of(oprema_indikatori),
     names_to = "atribut",
     values_to = "ima_opremu"
   ) %>%
@@ -322,9 +329,9 @@ auta %>%
 # Racunamo apsolutnu (u EUR) i relativnu (u procentima) razliku u medijani.
 
 poredjenje_opreme <- auta %>%
-  select(price, starts_with("ima_")) %>%
+  select(price, all_of(oprema_indikatori)) %>%
   pivot_longer(
-    cols = starts_with("ima_"),
+    cols = all_of(oprema_indikatori),
     names_to = "atribut",
     values_to = "ima_opremu"
   ) %>%
@@ -421,9 +428,6 @@ summary(auta$snaga_po_toni)
 
 sum(is.na(auta$snaga_po_toni))
 
-# Nakon obrade imamo 19736 nedostajućih vrednosti (~21%).
-# Najveći deo potiče od nedostajućih podataka o masi vozila
-# 
 
 quantile(
   auta$snaga_po_toni,
@@ -475,54 +479,6 @@ auta %>%
 # Provera ekstremnih vrednosti snage motora
 # Granice služe za dijagnostiku, ne za automatsko uklanjanje
 
-sumnjiva_snaga <- auta %>%
-  filter(
-    !is.na(power_hp),
-    power_hp < 20 | power_hp > 2000
-  ) %>%
-  select(
-    make, model, fuel_category,
-    power_hp, masa_kg, snaga_po_toni
-  )
-
-print(sumnjiva_snaga, n = Inf)
-
-nrow(sumnjiva_snaga)
-
-# Identifikovali smo 30 vrednosti snage izvan dijagnostičkih granica.
-# Opel Rocks-e sa 8 KS predstavlja opravdan izuzetak
-# Preostalih 29 vrednosti tretiramo kao sumnjive i menjamo ih sa NA
-
-auta <- auta %>%
-  mutate(
-    snaga_sumnjiva =
-      !is.na(power_hp) &
-      (
-        (power_hp < 20 &
-           !(make %in% "Opel" & model %in% "Rocks-e")) |
-          power_hp > 2000
-      )
-  )
-
-# Broj sumnjivih zapisa
-sum(auta$snaga_sumnjiva)
-
-# Zamena sumnjivih vrednosti nedostajucim
-auta <- auta %>%
-  mutate(
-    power_hp = if_else(
-      snaga_sumnjiva,
-      NA_real_,
-      power_hp
-    ),
-    
-    snaga_po_toni = if_else(
-      power_hp > 0 & masa_kg > 0,
-      power_hp / (masa_kg / 1000),
-      NA_real_
-    )
-  ) %>%
-  select(-snaga_sumnjiva)
 
 summary(auta$snaga_po_toni)
 
@@ -534,7 +490,7 @@ cor(
   use = "complete.obs"
 )
 
-# Pearsonov koeficijent korelacije iznosi 0.738, što pokazuje snažnu pozitivnu povezanost snage i mase sa cenom vozila
+# Pearsonov koeficijent korelacije iznosi 0.74, što pokazuje snažnu pozitivnu povezanost snage i mase sa cenom vozila
 # Znatno je veći nego onoj kod korelacije sa brojem stavki opreme
 # Kasnije ćemo proveriti koliko ovaj atribut donosi u odnosu na postojeće power_hp i masa_kg
 
@@ -1063,3 +1019,5 @@ poredjenje_sport_paketa %>%
 
 # Još uvek ne možemo zaključiti da sam sportski paket uzrokuje razliku.
 # Atribut ćemo zadržati kao kandidata za prediktivno modelovanje, a kasnije ćemo proveriti njegovu korisnost
+
+snimi(auta, "auta_feature_eng")
