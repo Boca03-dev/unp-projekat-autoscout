@@ -115,21 +115,29 @@ print(pregled_z)
 # возилу.
 #
 # Границе су постављене на основу познавања домена:
-#   power_hp            најјача серијска возила у овом ценовном
-#                       разреду имају до око 1.000 KS
-#   cylinders_volume_cc најмањи градски аутомобили ~600 cm³,
+#   power_hp            плафон серијске производње ~1.500 KS (Bugatti Chiron);
+#                       Porsche Taycan Turbo GT са 1.034 PS остаје у скупу
+#   cylinders_volume_cc прва генерација smart forTwo има 599 cm³,
 #                       највећи серијски мотори ~8.400 cm³ (V10)
 #   potrosnja           прикључни хибриди показују око 1 l/100 km,
 #                       највећи V12 мотори око 30 l/100 km
 #   masa_kg             већ ограничена у 01_priprema.R
+#   nr_seats, nr_doors, gears, cylinders, nr_prev_owners
+#                       вредности 99, 127 и 255 нису ретке вредности него
+#                       ознаке за непопуњено поље у изворном огласу
 # ============================================================
 GRANICE <- tribble(
   ~kolona,               ~donja, ~gornja, ~obrazlozenje,
-  "power_hp",                20,    1000,  "серијска путничка возила",
-  "cylinders_volume_cc",    600,    8500,  "од најмањих градских до V10 мотора",
+  "power_hp",                20,    1500,  "Bugatti Chiron, плафон серијске производње",
+  "cylinders_volume_cc",    550,    8500,  "од smart forTwo (599 cm³) до V10 мотора",
   "co2",                      1,     600,  "хемија сагоревања: ~2,3 kg CO2 по литру бензина",
   "potrosnja",                1,      35,  "од прикључних хибрида до V12 мотора",
-  "mileage_km_raw",           1,  600000,  "горња граница врло високе, али могуће километраже"
+  "mileage_km_raw",           1,  600000,  "горња граница врло високе, али могуће километраже",
+  "nr_seats",                 1,       9,  "путнички програм; комби возила изузета",
+  "nr_doors",                 2,       6,  "возило са једним вратима не постоји",
+  "gears",                    1,      10,  "највише 10 степени преноса у серијској производњи",
+  "cylinders",                0,      16,  "W16 је највећи серијски мотор",
+  "nr_prev_owners",           0,      10,  "вредност 99 је ознака за непознато"
 )
 
 # Нулта запремина мотора код електричних возила је ИСПРАВНА
@@ -152,7 +160,7 @@ print(provera_domena, width = Inf)
 # ------------------------------------------------------------
 cat("\n--- Снага мотора: вредности ван домена ---\n")
 auta %>%
-  filter(power_hp > 1000 | power_hp < 20) %>%
+  filter(power_hp > 1500 | power_hp < 20) %>%
   select(make, model, power_hp, cylinders_volume_cc, price, starost_god) %>%
   arrange(desc(power_hp)) %>%
   print(n = 20)
@@ -163,7 +171,7 @@ auta %>%
 cat("\n--- Запремина мотора: вредности ван домена ---\n")
 auta %>%
   filter(cylinders_volume_cc > 8500 |
-           (cylinders_volume_cc < 600 & cylinders_volume_cc > 0)) %>%
+           (cylinders_volume_cc < 550 & cylinders_volume_cc > 0)) %>%
   select(make, model, cylinders_volume_cc, cylinders, power_hp, price) %>%
   arrange(desc(cylinders_volume_cc)) %>%
   print(n = 20)
@@ -248,7 +256,29 @@ auta <- auta %>%
       TRUE               ~ potrosnja
     ),
     
-    mileage_km_raw = van_domena(mileage_km_raw, 1, 600000)
+    mileage_km_raw = van_domena(mileage_km_raw, 1, 600000),
+    
+    # Сентинел вредности: 99, 127 и 255 нису ретке вредности него
+    # ознаке за непопуњено поље у изворном огласу.
+    # Комбиновани минибуси (Sprinter и слично) легитимно имају
+    # преко 9 седишта, па за њих важи шира граница.
+    nr_seats = case_when(
+      body_type %in% c("Van", "Transporter") ~ van_domena(nr_seats, 1, 23),
+      TRUE                                   ~ van_domena(nr_seats, 1, 9)
+    ),
+    
+    # Ниједан серијски аутомобил нема преко 10 степени преноса.
+    gears = van_domena(gears, 1, 10),
+    
+    # Највећи серијски мотор је W16, значи 16 цилиндара.
+    cylinders = van_domena(cylinders, 0, 16),
+    
+    # Возило са једним вратима не постоји. Шеста врата код теренаца
+    # обично значе да је хауба пребројана као врата, али вредност
+    # није физички немогућа, па је задржавамо.
+    nr_doors = van_domena(nr_doors, 2, 6),
+    
+    nr_prev_owners = van_domena(nr_prev_owners, 0, 10)
   ) %>%
   select(-je_hibrid)
 posle_izmene <- auta %>%

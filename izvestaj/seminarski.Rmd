@@ -1039,7 +1039,29 @@ auta <- auta %>%
       TRUE                   ~ co2
     ),
 
-    mileage_km_raw = van_domena(mileage_km_raw, 1, 600000)
+        mileage_km_raw = van_domena(mileage_km_raw, 1, 600000),
+
+    # Сентинел вредности: 99, 127 и 255 нису ретке вредности него
+    # ознаке за непопуњено поље у изворном огласу.
+    # Комбиновани минибуси (Sprinter и слично) легитимно имају
+    # преко 9 седишта, па за њих важи шира граница.
+    nr_seats = case_when(
+      body_type %in% c("Van", "Transporter") ~ van_domena(nr_seats, 1, 23),
+      TRUE                                   ~ van_domena(nr_seats, 1, 9)
+    ),
+
+    # Ниједан серијски аутомобил нема преко 10 степени преноса.
+    gears = van_domena(gears, 1, 10),
+
+    # Највећи серијски мотор је W16, значи 16 цилиндара.
+    cylinders = van_domena(cylinders, 0, 16),
+
+    # Возило са једним вратима не постоји. Шеста врата код теренаца
+    # обично значе да је хауба пребројана као врата, али вредност
+    # није физички немогућа, па је задржавамо.
+    nr_doors = van_domena(nr_doors, 2, 6),
+
+    nr_prev_owners = van_domena(nr_prev_owners, 0, 10)
   ) %>%
   select(-je_hibrid)
 ```

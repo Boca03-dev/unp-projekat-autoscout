@@ -213,6 +213,9 @@ round(cramer_v_grupe, 3)
 
 # Nakon grupisanja Cramerov V iznosi 0.177
 
+# Ovde je df* = 2, pa su granice 0.07 / 0.21 / 0.35.
+# Vrednost 0.177 je zato bliza srednjoj nego slaboj povezanosti.
+
 # Pre grupisanja iznosio je 0.179, pa je razlika veoma veoma mala.
 
 # Zaključak:
@@ -245,6 +248,7 @@ g_gorivo_menjac <- podaci_test %>%
   tema_rad()
 
 print(g_gorivo_menjac)
+sacuvaj_grafik(g_gorivo_menjac, "06_gorivo_menjac")
 reziduali <- round(rezultat_grupe$stdres, 2)
 
 print(reziduali)
@@ -340,6 +344,9 @@ round(v_sport, 3)
 # Cramerov V iznosi 0.122, što ukazuje na relativno slabu povezanost između ova
 # dva obeležja
 
+# Pragovi za Cramerov V zavise od df* = min(r-1, c-1).
+# Ovde je df* = 1, pa su granice 0.1 / 0.3 / 0.5 — 0.122 je zaista slaba veza.
+
 # ==============================================================================
 # Numeričko-numerička
 # ==============================================================================
@@ -405,7 +412,7 @@ print(test_starost)
 
 # Pearsonov test za starost pokazuje statistički značajnu negativnu korelaciju sa
 # logaritmom cene 
-# Interval poređenja 95% iznosi [-0559, -0.550]
+# Interval poređenja 95% iznosi [-0.559, -0.550]
 
 # ==============================================================================
 # Kategorijsko-numerička
@@ -476,6 +483,7 @@ g_gorivo_cena <- podaci_gorivo_cena %>%
   tema_rad()
 
 print(g_gorivo_cena)
+sacuvaj_grafik(g_gorivo_cena, "06_gorivo_cena")
 
 podaci_gorivo_cena %>%
   group_by(gorivo_grupa) %>%
@@ -525,3 +533,6 @@ uporedi_grupe(
 # Wilcoxonov test takođe ukazuje na statistički značajnu razliku u raspodelama
 # cena između grupa, p < 0.05
 
+# Napomena: poredjenje nije kontrolisano po starosti vozila.
+# U 07 smo videli da su automobili sa sportskim paketom znatno mladji,
+# pa razlika u ceni delom potice od starosti, a ne samo od paketa.

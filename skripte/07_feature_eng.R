@@ -86,7 +86,7 @@ auta %>%
 
 # Raspodela bez automobila sa 0 stavki opreme
 
-auta %>%
+g_oprema <- auta %>%
   filter(broj_opreme_ukupno > 0) %>%
   ggplot(aes(x = broj_opreme_ukupno)) +
   geom_histogram(
@@ -100,6 +100,9 @@ auta %>%
     y = "Broj automobila"
   ) +
   tema_rad()
+
+print(g_oprema)
+sacuvaj_grafik(g_oprema, "07_broj_opreme")
 
 
 auta <- auta %>%
@@ -356,7 +359,7 @@ poredjenje_opreme <- auta %>%
 
 # Vizuelizacija razlika u medijani cene prema prisustvu opreme
 
-ggplot(
+g_oprema_cena <- ggplot(
   poredjenje_opreme,
   aes(
     x = reorder(atribut, razlika_eur),
@@ -378,6 +381,9 @@ ggplot(
     y = "Razlika u medijani cene"
   ) +
   tema_rad()
+
+print(g_oprema_cena)
+sacuvaj_grafik(g_oprema_cena, "07_oprema_cena")
 
 # Provera da li sama panorama utiče na cenu, ili možda samo noviji automobili imaju panoramu, pa to utiče na cenu
 
@@ -435,21 +441,6 @@ quantile(
   na.rm = TRUE
 )
 
-# Vizuelizacija raspodele
-
-ggplot(auta, aes(x = snaga_po_toni)) +
-  geom_histogram(
-    bins = 50,
-    fill = BOJA_1,
-    color = "white"
-  ) +
-  labs(
-    title = "Raspodela odnosa snage i mase vozila",
-    x = "Snaga po toni (KS/t)",
-    y = "Broj automobila"
-  ) +
-  tema_rad()
-
 # Provera automobila sa najvećim odnosom snage i mase
 
 auta %>%
@@ -495,7 +486,7 @@ cor(
 # Kasnije ćemo proveriti koliko ovaj atribut donosi u odnosu na postojeće power_hp i masa_kg
 
 # Raspodela odnosa snage i mase vozila
-ggplot(auta, aes(x = snaga_po_toni)) +
+g_snaga_toni <- ggplot(auta, aes(x = snaga_po_toni)) +
   geom_histogram(
     binwidth = 10,
     fill = BOJA_1,
@@ -509,6 +500,9 @@ ggplot(auta, aes(x = snaga_po_toni)) +
     y = "Broj automobila"
   ) +
   tema_rad()
+
+print(g_snaga_toni)
+sacuvaj_grafik(g_snaga_toni, "07_snaga_po_toni")
 
 # Provera korelacije bez gornjih 1% vrednosti
 granica <- quantile(
@@ -580,7 +574,7 @@ auta <- auta %>%
 
 # Raspodela lagaritmove kilometraže
 
-ggplot(auta, aes(x = log_km)) +
+g_log_km <- ggplot(auta, aes(x = log_km)) +
   geom_histogram(
     bins = 50,
     fill = BOJA_1,
@@ -592,6 +586,10 @@ ggplot(auta, aes(x = log_km)) +
     y = "Broj automobila"
   ) +
   tema_rad()
+
+print(g_log_km)
+sacuvaj_grafik(g_log_km, "07_log_km")
+
 # Logaritamskom transformacijom kilometraže dobijena je raspodela
 # sa izrazenom negativnom asimetrijom i dugim levim repom.
 
@@ -646,7 +644,7 @@ auta <- auta %>%
 # Vizuelizacija odnosa starosti i cene
 # Da bismo videli kakav je odnos starosti i cene, prikazaćemo medijanu cene za svaku navršenu godinu starosti.
 
-auta %>%
+g_starost_cena <- auta %>%
   mutate(
     godina_starosti = floor(starost_god)
   ) %>%
@@ -666,6 +664,9 @@ auta %>%
     y = "Medijana cene (EUR)"
   ) +
   tema_rad()
+
+print(g_starost_cena)
+sacuvaj_grafik(g_starost_cena, "07_starost_cena")
 
 # Grafik dokazuje ono što smo gore napisali
 # Cena najviše pada u prvih par godina
@@ -1019,5 +1020,18 @@ poredjenje_sport_paketa %>%
 
 # Još uvek ne možemo zaključiti da sam sportski paket uzrokuje razliku.
 # Atribut ćemo zadržati kao kandidata za prediktivno modelovanje, a kasnije ćemo proveriti njegovu korisnost
+
+# model_version има 674 недостајуће вредности, које индикатор наслеђује.
+# Ако верзија није наведена, пакет није евидентиран — то не значи да га
+# нема, али за модел то третирамо као одсуство. Информација о
+# ненаведеној опреми чува се у oprema_nije_navedena.
+auta <- auta %>%
+  mutate(ima_sport_paket = coalesce(ima_sport_paket, FALSE))
+
+auta <- auta %>%
+  select(-starts_with("equipment_"),
+         -any_of(c("description", "model_version")))
+
+names(auta)[sapply(auta, is.character)]   # provera, ne sme ostati teska tekstualna kolona
 
 snimi(auta, "auta_feature_eng")

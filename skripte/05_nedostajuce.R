@@ -333,7 +333,9 @@ cat("Редова за регресиону импутацију:",
 
 if (any(za_regresiju)) {
   predvidjeno <- predict(model_co2, newdata = auta[za_regresiju, ])
-  auta$co2[za_regresiju] <- pmax(0, predvidjeno)
+  # Горња граница из доменске анализе важи и за предвиђене вредности,
+  # иначе регресија пробија ограничење које смо сами поставили.
+  auta$co2[za_regresiju] <- pmin(600, pmax(0, predvidjeno))
 }
 
 auta <- imputiraj_hijerarhijski(auta, "co2")   # остатак, ако га има
@@ -447,6 +449,11 @@ stopifnot(
 cat("\nСве контроле прошле.\n")
 cat("Редова:", format(nrow(auta), big.mark = " "),
     "| Колона:", ncol(auta), "\n")
+
+# Ниво "непознато" се додаје и када колона нема ниједну недостајућу
+# вредност, што оставља празан ниво фактора. У model.matrix() такав
+# ниво даје колону самих нула, што смета глмнету у поглављу 9.
+auta <- auta %>% mutate(across(where(is.factor), droplevels))
 
 snimi(auta, "auta_imputirano")
 

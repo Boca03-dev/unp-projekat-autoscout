@@ -289,6 +289,8 @@ uporedi_grupe <- function(df, num_kolona, kat_kolona) {
     cat("H1: Бар једна група се разликује.\n\n")
     cat("--- ANOVA ---\n")
     print(summary(aov(vred ~ grupa, data = d)))
+    cat("--- Велчова ANOVA (без претпоставке једнаких варијанси) ---\n")
+    print(oneway.test(vred ~ grupa, data = d, var.equal = FALSE))
     cat("--- Краскал-Волисов тест ---\n")
     print(kruskal.test(vred ~ grupa, data = d))
   }
