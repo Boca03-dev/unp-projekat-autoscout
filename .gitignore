@@ -30,3 +30,4 @@ izvestaj/seminarski.html
 # Medjukoraci se regenerišu pokretanjem 01 i 04
 podaci/obradjeni/auta_cisto.rds
 podaci/obradjeni/auta_bez_anomalija.rds
+podaci/obradjeni/auta_imputirano.rds
