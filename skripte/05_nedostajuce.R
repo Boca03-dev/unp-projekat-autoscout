@@ -7,7 +7,6 @@
 # Излаз: podaci/obradjeni/auta_imputirano.rds
 #        slike/05_*.png
 #
-# Власник: A
 # ============================================================
 
 library(tidyverse)
@@ -456,6 +455,3 @@ cat("Редова:", format(nrow(auta), big.mark = " "),
 auta <- auta %>% mutate(across(where(is.factor), droplevels))
 
 snimi(auta, "auta_imputirano")
-
-cat("\nСледећи корак: 06_bivarijantna.R\n")
-cat("Колега: 07_feature_eng.R сада може да учитава auta_imputirano.rds\n")

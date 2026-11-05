@@ -294,4 +294,3 @@ df %>%
   count(is_used, is_new, is_preregistered) %>%
   print(n = Inf)
 
-cat("\nGotovo. Popuniti kolone znacenje, odluka, vlasnik i napomena u CSV-u.\n")

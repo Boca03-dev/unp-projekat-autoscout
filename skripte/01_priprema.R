@@ -8,11 +8,7 @@
 # Ulaz:  podaci/sirovi/autoscout24_dataset_20251108.csv
 # Izlaz: podaci/obradjeni/auta_cisto.rds
 #
-# NAPOMENA: skripta NE imputira nedostajuce vrednosti. NA ostaju
-# kakvi jesu i resavaju se u 05_nedostajuce.R. Ovde se podaci samo
-# dovode u strukturno ispravno stanje.
 #
-# Vlasnik: A
 # ============================================================
 
 library(tidyverse)
@@ -388,5 +384,3 @@ cat("\nNAPOMENA: logaritamska transformacija smanjuje apsolutnu asimetriju\n",
 
 cat("\n")
 snimi(auta, "auta_cisto")
-
-cat("\nGotovo. Sledeci korak: 02_opis_numericki.R (A) i 07_feature_eng.R (B).\n")

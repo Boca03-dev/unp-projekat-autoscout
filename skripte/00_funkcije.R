@@ -5,11 +5,6 @@
 # Ucitava se na pocetku svake skripte:
 #     source(here::here("skripte", "00_funkcije.R"))
 #
-# PRAVILO: ovaj fajl se SAMO ucitava, nikad ne pokrece sam.
-#          Ne sme da menja podatke niti da pravi izlaze.
-#
-# PRAVILO ZA TIM: ovo je jedini zajednicki fajl i jedino realno
-#          mesto sudara na gitu. Pre izmene javiti drugom clanu.
 # ============================================================
 
 suppressPackageStartupMessages({

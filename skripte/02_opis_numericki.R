@@ -7,7 +7,6 @@
 # Улаз:  podaci/obradjeni/auta_cisto.rds
 # Излаз: slike/*.png  (скрипта НЕ мења податке)
 #
-# Власник: A
 # ============================================================
 
 library(tidyverse)
@@ -296,5 +295,4 @@ tabela_opisa %>%
   )) %>%
   print(n = Inf)
 
-cat("\nГотово. Графици су снимљени у", P_SLIKE, "\n")
-cat("Следећи корак: 04_netipicne.R\n")
+

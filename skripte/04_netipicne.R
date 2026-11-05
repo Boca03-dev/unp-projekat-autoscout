@@ -8,16 +8,7 @@
 # Излаз: podaci/obradjeni/auta_bez_anomalija.rds
 #        slike/04_*.png
 #
-# Власник: A
 #
-# ВАЖНО О РЕДОСЛЕДУ У ПРОЈЕКТУ:
-#   01_priprema.R  -> auta_cisto.rds
-#   04_netipicne.R -> auta_bez_anomalija.rds   (ова скрипта)
-#   05_nedostajuce.R -> auta_imputirano.rds
-#   07_feature_eng.R чита auta_imputirano.rds
-#
-# Импутација долази ПОСЛЕ ове скрипте, јер ова скрипта ствара
-# нове недостајуће вредности (немогуће вредности -> NA).
 # ============================================================
 
 library(tidyverse)
@@ -469,7 +460,3 @@ pregled_na(auta, min_pct = 0) %>% print(n = 15)
 auta <- auta %>% select(-je_cisto_el)   # помоћни индикатор, не иде даље
 
 snimi(auta, "auta_bez_anomalija")
-
-cat("\nСледећи корак: 05_nedostajuce.R\n")
-cat("НАПОМЕНА за колегу: 07_feature_eng.R треба да чита\n")
-cat("auta_imputirano.rds (излаз скрипте 05), а не auta_cisto.rds.\n")
