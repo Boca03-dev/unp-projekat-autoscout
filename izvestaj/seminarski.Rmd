@@ -561,26 +561,25 @@ tibble(
            "Медијана старости (године)",
            "Медијана километраже (km)",
            "Возила са преко 200.000 km"),
-  Вредност = c(
-    sum(sirovi$price <= 1, na.rm = TRUE),
-    nrow(niske),
-    sum(niske$starost_god >= 5, na.rm = TRUE),
-    round(median(niske$starost_god, na.rm = TRUE), 1),
-    median(niske$mileage_km_raw, na.rm = TRUE),
-    sum(niske$mileage_km_raw > 200000, na.rm = TRUE)
+    Вредност = c(
+    format(sum(sirovi$price <= 1, na.rm = TRUE), big.mark = "."),
+    format(nrow(niske), big.mark = "."),
+    format(sum(niske$starost_god >= 5, na.rm = TRUE), big.mark = "."),
+    format(round(median(niske$starost_god, na.rm = TRUE), 1), decimal.mark = ","),
+    format(median(niske$mileage_km_raw, na.rm = TRUE), big.mark = "."),
+    format(sum(niske$mileage_km_raw > 200000, na.rm = TRUE), big.mark = ".")
   )
-) %>% kable(caption = "Профил огласа испод доње границе",
-            format.args = list(big.mark = "."))
+) %>% kable(caption = "Профил огласа испод доње границе")
 ```
 
 Испод доње границе налази се `r sum(sirovi$price <= 1, na.rm = TRUE)` огласа са
 ценом од 1 EUR и `r nrow(niske)` огласа са ценом између 2 и 999 EUR. Прва група
 су очигледне замене за неунету вредност. Друга је, супротно очекивању, скоро у
 целини састављена од **веома старих возила велике километраже**: медијана
-старости износи `r round(median(niske$starost_god, na.rm = TRUE), 1)` година,
+старости износи `r format(round(median(niske$starost_god, na.rm = TRUE), 1), decimal.mark = ",")` година,
 медијана километраже
 `r format(median(niske$mileage_km_raw, na.rm = TRUE), big.mark = ".")` km, а
-`r round(mean(niske$mileage_km_raw > 200000, na.rm = TRUE) * 100, 1)`% их је
+`r format(round(mean(niske$mileage_km_raw > 200000, na.rm = TRUE) * 100, 1), decimal.mark = ",")`% их је
 прешло преко 200.000 km. Млађих од пет година има свега
 `r sum(niske$starost_god < 5, na.rm = TRUE)`.
 

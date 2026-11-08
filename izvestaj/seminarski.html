@@ -3598,48 +3598,47 @@ NEDC и новијем WLTP. Провера преклапања показуј�
 <span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>           <span class="st">&quot;Медијана старости (године)&quot;</span>,</span>
 <span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>           <span class="st">&quot;Медијана километраже (km)&quot;</span>,</span>
 <span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>           <span class="st">&quot;Возила са преко 200.000 km&quot;</span>),</span>
-<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>  Вредност <span class="ot">=</span> <span class="fu">c</span>(</span>
-<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>    <span class="fu">sum</span>(sirovi<span class="sc">$</span>price <span class="sc">&lt;=</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>    <span class="fu">nrow</span>(niske),</span>
-<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>    <span class="fu">sum</span>(niske<span class="sc">$</span>starost_god <span class="sc">&gt;=</span> <span class="dv">5</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">median</span>(niske<span class="sc">$</span>starost_god, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>),</span>
-<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>    <span class="fu">median</span>(niske<span class="sc">$</span>mileage_km_raw, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>    <span class="fu">sum</span>(niske<span class="sc">$</span>mileage_km_raw <span class="sc">&gt;</span> <span class="dv">200000</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>    Вредност <span class="ot">=</span> <span class="fu">c</span>(</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">sum</span>(sirovi<span class="sc">$</span>price <span class="sc">&lt;=</span> <span class="dv">1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>),</span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">nrow</span>(niske), <span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>),</span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">sum</span>(niske<span class="sc">$</span>starost_god <span class="sc">&gt;=</span> <span class="dv">5</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>),</span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">round</span>(<span class="fu">median</span>(niske<span class="sc">$</span>starost_god, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">1</span>), <span class="at">decimal.mark =</span> <span class="st">&quot;,&quot;</span>),</span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">median</span>(niske<span class="sc">$</span>mileage_km_raw, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>),</span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>    <span class="fu">format</span>(<span class="fu">sum</span>(niske<span class="sc">$</span>mileage_km_raw <span class="sc">&gt;</span> <span class="dv">200000</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>)</span>
 <span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a>  )</span>
-<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;Профил огласа испод доње границе&quot;</span>,</span>
-<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a>            <span class="at">format.args =</span> <span class="fu">list</span>(<span class="at">big.mark =</span> <span class="st">&quot;.&quot;</span>))</span></code></pre></div>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">&quot;Профил огласа испод доње границе&quot;</span>)</span></code></pre></div>
 <table>
 <caption>Профил огласа испод доње границе</caption>
 <thead>
 <tr class="header">
 <th align="left">Мера</th>
-<th align="right">Вредност</th>
+<th align="left">Вредност</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left">Огласа са ценом од 1 EUR</td>
-<td align="right">8.0</td>
+<td align="left">8</td>
 </tr>
 <tr class="even">
 <td align="left">Огласа са ценом од 2 до 999 EUR</td>
-<td align="right">260.0</td>
+<td align="left">260</td>
 </tr>
 <tr class="odd">
 <td align="left">Од тога старијих од 5 година</td>
-<td align="right">258.0</td>
+<td align="left">258</td>
 </tr>
 <tr class="even">
 <td align="left">Медијана старости (године)</td>
-<td align="right">21.6</td>
+<td align="left">21,6</td>
 </tr>
 <tr class="odd">
 <td align="left">Медијана километраже (km)</td>
-<td align="right">250.000.0</td>
+<td align="left">250.000</td>
 </tr>
 <tr class="even">
 <td align="left">Возила са преко 200.000 km</td>
-<td align="right">183.0</td>
+<td align="left">183</td>
 </tr>
 </tbody>
 </table>
@@ -3647,7 +3646,7 @@ NEDC и новијем WLTP. Провера преклапања показуј�
 са ценом између 2 и 999 EUR. Прва група су очигледне замене за неунету
 вредност. Друга је, супротно очекивању, скоро у целини састављена од
 <strong>веома старих возила велике километраже</strong>: медијана
-старости износи 21.6 година, медијана километраже 250.000 km, а 70.4% их
+старости износи 21,6 година, медијана километраже 250.000 km, а 70,4% их
 је прешло преко 200.000 km. Млађих од пет година има свега 2.</p>
 <div id="проверена-и-одбачена-претпоставка" class="section level3" number="2.8.1">
 <h3><span class="header-section-number">2.8.1</span> Проверена и
