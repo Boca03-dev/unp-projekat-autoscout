@@ -31,3 +31,5 @@ izvestaj/*_cache/
 podaci/obradjeni/auta_cisto.rds
 podaci/obradjeni/auta_bez_anomalija.rds
 podaci/obradjeni/auta_imputirano.rds
+
+podaci/obradjeni/random_forest_model*.rds
