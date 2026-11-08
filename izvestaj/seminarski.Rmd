@@ -210,8 +210,9 @@ library(here)        # путање независне од радног дир�
 put_recnik <- file.path(P_OBRADJENI, "recnik_podataka.csv")
 
 if (file.exists(put_recnik)) {
-  read_csv(put_recnik, show_col_types = FALSE) %>%
-    count(odluka, name = "Број колона") %>%
+    read_csv(put_recnik, show_col_types = FALSE) %>%
+      filter(kolona %in% names(sirovi)) %>%   # речник садржи и планирана изведена обележја
+      count(odluka, name = "Број колона") %>%
     arrange(desc(`Број колона`)) %>%
     rename(Одлука = odluka) %>%
     kable(caption = "Расподела одлука у речнику података")
@@ -219,6 +220,8 @@ if (file.exists(put_recnik)) {
   cat("Речник није пронађен — покренути 00a_recnik_podataka.R\n")
 }
 ```
+
+Речник садржи и редове за обележја која су тек требала да буду изведена, па укупан број редова превазилази број изворних колона. У табели су приказане само одлуке о колонама изворног скупа.
 
 > Пример у коме је хеуристика погрешила: колона `zip` (поштански број)
 > препозната је као „број са јединицом“, јер холандски поштански бројеви имају
